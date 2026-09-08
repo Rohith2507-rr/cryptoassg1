@@ -1,0 +1,77 @@
+def get_order(key):
+    return sorted(range(len(key)), key=lambda i: (key[i], i))
+
+
+def columnar_encrypt(text, key):
+    text = text.replace(" ", "").upper()
+
+    columns = len(key)
+    rows = (len(text) + columns - 1) // columns
+
+    while len(text) < rows * columns:
+        text += 'X'
+
+    matrix = []
+
+    for i in range(rows):
+        matrix.append(
+            list(text[i * columns:(i + 1) * columns])
+        )
+
+    order = get_order(key)
+
+    result = ""
+
+    for col in order:
+        for row in range(rows):
+            result += matrix[row][col]
+
+    return result
+
+
+def columnar_decrypt(cipher, key):
+    columns = len(key)
+    rows = len(cipher) // columns
+
+    order = get_order(key)
+
+    matrix = [[''] * columns for _ in range(rows)]
+
+    index = 0
+
+    for col in order:
+        for row in range(rows):
+            matrix[row][col] = cipher[index]
+            index += 1
+
+    result = ""
+
+    for row in range(rows):
+        result += ''.join(matrix[row])
+
+    return result
+
+
+def double_encrypt(text, key1, key2):
+    first = columnar_encrypt(text, key1)
+    second = columnar_encrypt(first, key2)
+
+    return second
+
+
+def double_decrypt(cipher, key1, key2):
+    first = columnar_decrypt(cipher, key2)
+    second = columnar_decrypt(first, key1)
+
+    return second
+
+
+message = input("Enter message: ")
+key1 = input("Enter first key: ").upper()
+key2 = input("Enter second key: ").upper()
+
+encrypted = double_encrypt(message, key1, key2)
+decrypted = double_decrypt(encrypted, key1, key2)
+
+print("Encrypted Message:", encrypted)
+print("Decrypted Message:", decrypted)
