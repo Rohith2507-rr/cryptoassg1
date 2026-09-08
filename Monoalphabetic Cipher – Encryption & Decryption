@@ -1,0 +1,43 @@
+import string
+
+alphabet = string.ascii_uppercase
+
+key = input("Enter 26-letter key: ").upper()
+
+if len(key) != 26 or len(set(key)) != 26 or not key.isalpha():
+    print("Invalid key! Enter 26 unique letters.")
+    exit()
+
+def encrypt(text):
+    result = ""
+
+    for ch in text.upper():
+        if ch.isalpha():
+            index = alphabet.index(ch)
+            result += key[index]
+        else:
+            result += ch
+
+    return result
+
+
+def decrypt(text):
+    result = ""
+
+    for ch in text.upper():
+        if ch.isalpha():
+            index = key.index(ch)
+            result += alphabet[index]
+        else:
+            result += ch
+
+    return result
+
+
+message = input("Enter message: ")
+
+encrypted = encrypt(message)
+decrypted = decrypt(encrypted)
+
+print("Encrypted Message:", encrypted)
+print("Decrypted Message:", decrypted)
